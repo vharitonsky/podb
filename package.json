@@ -1,0 +1,7 @@
+{
+  "name": "podb",
+  "dependencies": {
+    "flora-sql-parser": "0.8.0",
+    "pofile": "1.0.11"
+  }
+}
