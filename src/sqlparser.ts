@@ -59,25 +59,3 @@ export type ParsedStatement = {
 export function parseSql(statement: string): ParsedStatement {
   return p.parse(statement);
 }
-
-// > ss = p.parse('SELECT * FROM t where msgstr="ddsa"');
-// { with: null,
-//   type: 'select',
-//   options: null,
-//   distinct: null,
-//   columns: '*',
-//   from: [ { db: null, table: 't', as: null } ],
-//   where:
-//    { type: 'binary_expr',
-//      operator: '=',
-//      left: { type: 'column_ref', table: null, column: 'msgstr' },
-//      right: { type: 'column_ref', table: null, column: 'ddsa' } },
-//   groupby: null,
-//   having: null,
-//   orderby: null,
-//   limit: null }
-// > ss.where
-// { type: 'binary_expr',
-//   operator: '=',
-//   left: { type: 'column_ref', table: null, column: 'msgstr' },
-//   right: { type: 'column_ref', table: null, column: 'ddsa' } }
