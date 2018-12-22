@@ -26,7 +26,7 @@ export class PoTable {
     this.po = parse(tableData);
   }
 
-  _match(item: Item, where: WhereClause | ColumnRef): boolean {
+  private match(item: Item, where: WhereClause | ColumnRef): boolean {
     if (where.type == WhereType.COLUMN) {
       const condition = <ColumnRef>where;
       if (AVAILABLE_COLUMNS.indexOf(condition.column) == -1) {
@@ -52,17 +52,17 @@ export class PoTable {
         }
       } else if (where.operator == OperatorType.AND) {
         return (
-          this._match(item, <WhereClause>where.left) &&
-          this._match(item, <WhereClause>where.right)
+          this.match(item, <WhereClause>where.left) &&
+          this.match(item, <WhereClause>where.right)
         );
       } else if (where.operator == OperatorType.NOT) {
-        return !this._match(item, <WhereClause>where.expr);
+        return !this.match(item, <WhereClause>where.expr);
       }
     }
     return false;
   }
 
-  _set(item: Item, setValues: Array<SetValue>) {
+  private set(item: Item, setValues: Array<SetValue>) {
     for (const setValue of setValues) {
       switch (setValue.column) {
         case "msgid": {
@@ -79,27 +79,27 @@ export class PoTable {
     }
   }
 
-  _select(items: Array<Item>, where: WhereClause) {
+  private select(items: Array<Item>, where: WhereClause) {
     const result = [];
     for (const item of items) {
-      if (this._match(item, where)) {
+      if (this.match(item, where)) {
         result.push(item);
       }
     }
     return result;
   }
 
-  _update(
+  private update(
     items: Array<Item>,
     where: WhereClause,
     setValues: Array<SetValue>
   ): number {
     let updatedCount = 0;
     for (const item of items) {
-      if (this._match(item, where)) {
+      if (this.match(item, where)) {
         const msgid = item.msgid;
         const msgctxt = item.msgctxt || "";
-        this._set(item, setValues);
+        this.set(item, setValues);
         const [start, finish] = find(this.rawData, msgid, msgctxt);
         const splitData = this.rawData.split("\n");
         this.rawData = splitData
@@ -118,10 +118,10 @@ export class PoTable {
     const sql = parseSql(statement);
     switch (sql.type) {
       case QueryType.SELECT: {
-        return this._select(this.po.items, sql.where);
+        return this.select(this.po.items, sql.where);
       }
       case QueryType.UPDATE: {
-        return this._update(this.po.items, sql.where, sql.set);
+        return this.update(this.po.items, sql.where, sql.set);
       }
       default:
         throw "Only selects and updates are supported";
