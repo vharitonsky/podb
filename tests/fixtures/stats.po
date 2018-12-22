@@ -1,0 +1,31 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: tests/fixtures/checkTest/check-trans-exist.js:2
+#: tests/fixtures/checkTest/check-trans-exist.js:3
+msgid "test"
+msgstr ""
+
+#: tests/fixtures/checkTest/check-trans-exist.js:2
+#: tests/fixtures/checkTest/check-trans-exist.js:3
+msgctxt "bla"
+msgid "test"
+msgstr ""
+
+msgctxt "lala"
+msgid "test"
+msgstr ""
+
+msgid "test_plural"
+msgid_plural "test_plural"
+msgstr[0] ""
+msgstr[1] ""
+
+msgctxt "bla"
+msgid "test_plural"
+msgid_plural "test_plural"
+msgstr ""
+
+

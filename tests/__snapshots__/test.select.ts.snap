@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`select * from table 1`] = `
+Array [
+  Object {
+    "comments": Array [],
+    "extractedComments": Array [],
+    "flags": Object {},
+    "msgctxt": null,
+    "msgid": "test",
+    "msgid_plural": null,
+    "msgstr": Array [
+      "",
+    ],
+    "nplurals": 2,
+    "obsolete": false,
+    "references": Array [
+      "tests/fixtures/checkTest/check-trans-exist.js:2",
+      "tests/fixtures/checkTest/check-trans-exist.js:3",
+    ],
+  },
+  Object {
+    "comments": Array [],
+    "extractedComments": Array [],
+    "flags": Object {},
+    "msgctxt": "bla",
+    "msgid": "test",
+    "msgid_plural": null,
+    "msgstr": Array [
+      "",
+    ],
+    "nplurals": 2,
+    "obsolete": false,
+    "references": Array [
+      "tests/fixtures/checkTest/check-trans-exist.js:2",
+      "tests/fixtures/checkTest/check-trans-exist.js:3",
+    ],
+  },
+  Object {
+    "comments": Array [],
+    "extractedComments": Array [],
+    "flags": Object {},
+    "msgctxt": "lala",
+    "msgid": "test",
+    "msgid_plural": null,
+    "msgstr": Array [
+      "",
+    ],
+    "nplurals": 2,
+    "obsolete": false,
+    "references": Array [],
+  },
+  Object {
+    "comments": Array [],
+    "extractedComments": Array [],
+    "flags": Object {},
+    "msgctxt": null,
+    "msgid": "test_plural",
+    "msgid_plural": "test_plural",
+    "msgstr": Array [
+      "",
+      "",
+    ],
+    "nplurals": 2,
+    "obsolete": false,
+    "references": Array [],
+  },
+  Object {
+    "comments": Array [],
+    "extractedComments": Array [],
+    "flags": Object {},
+    "msgctxt": "bla",
+    "msgid": "test_plural",
+    "msgid_plural": "test_plural",
+    "msgstr": Array [
+      "",
+    ],
+    "nplurals": 2,
+    "obsolete": false,
+    "references": Array [],
+  },
+]
+`;
