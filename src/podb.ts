@@ -1,16 +1,19 @@
 import * as fs from 'fs';
 import { find } from './finder';
-import { Item, parse } from 'pofile';
+import { Item, parse, PO } from 'pofile';
 import { parseSql, WhereClause, WhereType, OperatorType, ColumnRef, SetValue, QueryType, ParsedStatement } from './sqlparser';
 
 const AVAILABLE_COLUMNS = ["msgid", "msgstr", "msgctxt", "msgid_plural"]
 const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join(', ')}`
 
-export class PoDb {
-    path: string;
+export class PoTable {
 
-    constructor(path: string) {
-        this.path = path
+    po: PO
+    rawData: string
+
+    constructor(tableData: string) {
+        this.rawData = tableData;
+        this.po = parse(tableData);
     }
 
     _match(item: Item, where: WhereClause|ColumnRef): boolean {
@@ -73,20 +76,49 @@ export class PoDb {
         return result;
     }
 
-    _update(items: Array<Item>, where: WhereClause, setValues: Array<SetValue>, filename: string, data: string): number {
+    _update(items: Array<Item>, where: WhereClause, setValues: Array<SetValue>): number {
         let updatedCount = 0
         for (const item of items){
             if (this._match(item, where)) {
                 const msgid = item.msgid;
                 const msgctxt = item.msgctxt || "";
                 this._set(item, setValues);
-                const [start, finish] = find(data, msgid, msgctxt);
-                data = data.split('\n').slice(0, start - 1).concat([item.toString(), '']).concat(data.split('\n').slice(finish)).join('\n');
+                const [start, finish] = find(this.rawData, msgid, msgctxt);
+                const splitData = this.rawData.split('\n');
+                this.rawData = (
+                    splitData
+                    .slice(0, start - 1)
+                    .concat([item.toString(), ''])
+                    .concat(splitData.slice(finish))
+                    .join('\n')
+                );
                 updatedCount += 1;
             }
         }
-        console.log(data)
+        this.po = parse(this.rawData);
         return updatedCount;
+    }
+
+    execute(statement: string): number|Array<Item> {
+        const sql = parseSql(statement);
+        switch (sql.type) {
+            case QueryType.SELECT: {
+                return this._select(this.po.items, sql.where);
+            }
+            case QueryType.UPDATE: {
+                return this._update(this.po.items, sql.where, sql.set);
+            }
+            default:
+                throw("Only selects and updates are supported")
+        }
+    }
+}
+
+export class PoDb {
+    path: string;
+
+    constructor(path: string) {
+        this.path = path
     }
 
     _getFilename(sql: ParsedStatement) {
@@ -97,21 +129,16 @@ export class PoDb {
         }
     }
 
-    execute(statement: string): number|Array<Item> {
+    execute(statement: string, sync:Boolean): number|Array<Item> {
         const sql = parseSql(statement);
-        const filename = this._getFilename(sql)
-        let data = fs.readFileSync(`${this.path}/${filename}.po`).toString();
-        const po = parse(data);
-
-        switch (sql.type) {
-            case QueryType.SELECT: {
-                return this._select(po.items, sql.where);
-            }
-            case QueryType.UPDATE: {
-                return this._update(po.items, sql.where, sql.set, filename, data);
-            }
-            default:
-                throw("Only selects and updates are supported")
+        const filename = this._getFilename(sql);
+        const path = `${this.path}/${filename}.po`;
+        let data = fs.readFileSync(path).toString();
+        const poTable = new PoTable(data);
+        const result = poTable.execute(statement);
+        if(sync){
+            fs.writeFileSync(path, poTable.rawData);
         }
+        return result;
     }
 }
