@@ -15,7 +15,7 @@ NOT
 
 ## Example
 ```
-> const poDb = require('./podb').PoDb
+> const poDb = require('podb').PoDb
 undefined
 > db = new poDb('.')
 PoDb { path: '.' }
