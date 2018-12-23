@@ -136,7 +136,7 @@ export class PoDb {
     this.path = path;
   }
 
-  _getFilename(sql: ParsedStatement) {
+  private getFilename(sql: ParsedStatement) {
     switch (sql.type) {
       case QueryType.SELECT:
         return sql.from[0].table;
@@ -149,7 +149,7 @@ export class PoDb {
 
   execute(statement: string, sync: Boolean): number | Array<Item> {
     const sql = parseSql(statement);
-    const filename = this._getFilename(sql);
+    const filename = this.getFilename(sql);
     const path = `${this.path}/${filename}.po`;
     let data = fs.readFileSync(path).toString();
     const poTable = new PoTable(data);

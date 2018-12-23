@@ -1,5 +1,6 @@
 {
   "name": "podb",
+  "version": "0.0.1",
   "scripts": {
     "preversion": "npm run build && npm test",
     "test": "mkdir -p dist && jest",
