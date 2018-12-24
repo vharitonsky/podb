@@ -1,8 +1,10 @@
 import * as fs from "fs";
 import { find } from "./finder";
 import { Item, parse, PO } from "pofile";
+import {regExpFromString} from "./util";
 import {
   parseSql,
+  isComparison,
   WhereClause,
   WhereType,
   OperatorType,
@@ -11,11 +13,10 @@ import {
   QueryType,
   ParsedStatement
 } from "./sqlparser";
+import { isArray } from "util";
 
 const AVAILABLE_COLUMNS = ["msgid", "msgstr", "msgctxt", "msgid_plural"];
-const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join(
-  ", "
-)}`;
+const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join(", ")}`;
 
 export class PoTable {
   po: PO;
@@ -26,27 +27,56 @@ export class PoTable {
     this.po = parse(tableData);
   }
 
+  private test(operator: OperatorType, left: string, right: string|RegExp): boolean {
+    if(operator == OperatorType.EQUAL){
+      return left == right;
+    } else if (operator == OperatorType.LIKE) {
+      return (<RegExp>right).test(left)
+    } else {
+      return false
+    }
+  }
+
+  private getValue(operator: OperatorType, rawValue: string): string|RegExp{
+      if (operator == OperatorType.LIKE) {
+        return regExpFromString(rawValue);
+      } else {
+        return rawValue;
+      }
+  }
+
   private match(item: Item, where: WhereClause | ColumnRef): boolean {
-    if (where.type == WhereType.COLUMN) {
+    if(!where){
+      return true
+    }
+    else if (where.type == WhereType.COLUMN) {
       const condition = <ColumnRef>where;
       if (AVAILABLE_COLUMNS.indexOf(condition.column) == -1) {
         throw AVAILABLE_COLUMNS_EXCEPTION;
       }
       if (condition.column == "msgid") return !!item.msgid;
-      if (condition.column == "msgstr") return !!item.msgstr[0];
+      if (condition.column == "msgstr")
+        return !!item.msgstr.reduce((acc, b) => acc + b);
       if (condition.column == "msgctxt") return !!item.msgctxt;
       if (condition.column == "msgid_plural") return !!item.msgid_plural;
     } else {
-      where = <WhereClause>where;
-      if (where.operator == OperatorType.EQUAL) {
+      where = <WhereClause>where
+      if (isComparison(where.operator)) {
         const condition = <ColumnRef>where.left;
-        const value = (<ColumnRef>where.right).value;
+        const value = this.getValue(where.operator, (<ColumnRef>where.right).value);
         if (condition.column == "msgid") {
-          return item.msgid == value;
+          return this.test(where.operator, item.msgid, value);
+        } else if (condition.column == "msgid_plural") {
+          return this.test(where.operator, item.msgid_plural || "", value);
         } else if (condition.column == "msgstr") {
-          return item.msgstr[0] == value;
+          for (const msg of item.msgstr) {
+            if (this.test(where.operator, msg, value)) {
+              return true;
+            }
+            return false;
+          }
         } else if (condition.column == "msgctxt") {
-          return (item.msgctxt || "") == value;
+          return this.test(where.operator, item.msgctxt || "", value);
         } else {
           throw AVAILABLE_COLUMNS_EXCEPTION;
         }
@@ -80,13 +110,11 @@ export class PoTable {
   }
 
   private select(items: Array<Item>, where: WhereClause) {
-    const result = [];
-    for (const item of items) {
-      if (this.match(item, where)) {
-        result.push(item);
-      }
-    }
-    return result;
+    return items.filter((item) => this.match(item, where));
+  }
+  
+  private count(items: Array<Item>, where: WhereClause) {
+    return items.reduce((acc, item) => acc + (this.match(item, where) ? 1 : 0), 0);
   }
 
   private update(
@@ -118,7 +146,15 @@ export class PoTable {
     const sql = parseSql(statement);
     switch (sql.type) {
       case QueryType.SELECT: {
-        return this.select(this.po.items, sql.where);
+        if (
+          isArray(sql.columns) &&
+          sql.columns[0].expr.type == 'function' &&
+          sql.columns[0].expr.name == 'count'
+        ) {
+          return this.count(this.po.items, sql.where);
+        } else {
+          return this.select(this.po.items, sql.where);
+        }
       }
       case QueryType.UPDATE: {
         return this.update(this.po.items, sql.where, sql.set);

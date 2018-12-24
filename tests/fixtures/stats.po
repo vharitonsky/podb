@@ -15,8 +15,12 @@ msgid "test"
 msgstr ""
 
 msgctxt "lala"
-msgid "test"
+msgid "TESTUPPER"
 msgstr ""
+
+msgctxt "lala"
+msgid "test_regexp"
+msgstr "test_regeyp"
 
 msgid "test_plural"
 msgid_plural "test_plural"
@@ -27,5 +31,3 @@ msgctxt "bla"
 msgid "test_plural"
 msgid_plural "test_plural"
 msgstr ""
-
-

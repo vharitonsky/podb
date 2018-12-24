@@ -10,7 +10,9 @@ export enum QueryType {
 export enum OperatorType {
   AND = "AND",
   NOT = "NOT",
-  EQUAL = "="
+  EQUAL = "=",
+  LIKE = "LIKE",
+  ILIKE = "ILIKE",
 }
 
 export enum WhereType {
@@ -28,6 +30,7 @@ export type ColumnRef = {
   value: string;
   type: string;
   table?: string;
+  name: string;
 };
 
 export type WhereClause = {
@@ -58,4 +61,12 @@ export type ParsedStatement = {
 
 export function parseSql(statement: string): ParsedStatement {
   return p.parse(statement);
+}
+
+export function isComparison(operator: OperatorType) {
+  return (
+    operator == OperatorType.EQUAL ||
+    operator == OperatorType.LIKE ||
+    operator == OperatorType.ILIKE
+  )
 }
