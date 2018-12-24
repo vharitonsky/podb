@@ -25,7 +25,7 @@ msgstr "test_regeyp"
 msgid "test_plural"
 msgid_plural "test_plural"
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "xxx"
 
 msgctxt "bla"
 msgid "test_plural"

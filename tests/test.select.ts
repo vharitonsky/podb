@@ -14,7 +14,7 @@ test("select * from table", () => {
 
 test("select * from table where not msgstr", () => {
   const result = <Item[]>table.execute("select * from t where not msgstr");
-  expect(result.length).toEqual(5);
+  expect(result.length).toEqual(4);
 });
 
 test("select * from table like", () => {
@@ -47,4 +47,11 @@ test("select or", () => {
     table.execute("select count(1) from t where not msgctxt or msgctxt='bla'")
   );
   expect(count).toEqual(4);
+});
+
+test("select plural", () => {
+  const count = <number>(
+    table.execute("select count(1) from t where msgstr1='xxx'")
+  );
+  expect(count).toEqual(1);
 });

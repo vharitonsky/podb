@@ -15,7 +15,13 @@ import {
 } from "./sqlparser";
 import { isArray } from "util";
 
-const AVAILABLE_COLUMNS = ["msgid", "msgstr", "msgctxt", "msgid_plural"];
+const AVAILABLE_COLUMNS = [
+  "msgid",
+  "msgstr",
+  "msgstr[0-9]",
+  "msgctxt",
+  "msgid_plural"
+];
 const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join(
   ", "
 )}`;
@@ -62,6 +68,8 @@ export class PoTable {
       if (condition.column == "msgid") return !!item.msgid;
       if (condition.column == "msgstr")
         return !!item.msgstr.reduce((acc, b) => acc + b);
+      if (condition.column.indexOf("msgstr") == 0)
+        return !!item.msgstr[parseInt(condition.column[6])];
       if (condition.column == "msgctxt") return !!item.msgctxt;
       if (condition.column == "msgid_plural") return !!item.msgid_plural;
     } else {
@@ -76,6 +84,12 @@ export class PoTable {
           return this.test(where.operator, item.msgid, value);
         } else if (condition.column == "msgid_plural") {
           return this.test(where.operator, item.msgid_plural || "", value);
+        } else if (condition.column.indexOf("msgstr") == 0) {
+          return this.test(
+            where.operator,
+            item.msgstr[parseInt(condition.column[6])],
+            value
+          );
         } else if (condition.column == "msgstr") {
           for (const msg of item.msgstr) {
             if (this.test(where.operator, msg, value)) {
@@ -107,26 +121,27 @@ export class PoTable {
 
   private set(item: Item, setValues: Array<SetValue>) {
     for (const setValue of setValues) {
-      switch (setValue.column) {
-        case "msgid": {
-          item.msgid = setValue.value.value;
-          continue;
-        }
-        case "msgstr": {
-          item.msgstr = [setValue.value.value];
-        }
-        case "msgctxt": {
-          item.msgctxt = setValue.value.value;
-        }
+      const column = setValue.column;
+      const value = setValue.value.value;
+      if (column == "msgid") {
+        item.msgid = value;
+      } else if (column == "msgstr") {
+        item.msgstr = [value];
+      } else if (column.indexOf("msgstr") == 0) {
+        item.msgstr[parseInt(column[6])] = value;
+      } else if (column == "msgctxt") {
+        item.msgctxt = value;
+      } else {
+        throw AVAILABLE_COLUMNS_EXCEPTION;
       }
     }
   }
 
-  private select(items: Array<Item>, where: WhereClause) {
+  private select(items: Array<Item>, where: WhereClause): Array<Item> {
     return items.filter(item => this.match(item, where));
   }
 
-  private count(items: Array<Item>, where: WhereClause) {
+  private count(items: Array<Item>, where: WhereClause): number {
     return items.reduce(
       (acc, item) => acc + (this.match(item, where) ? 1 : 0),
       0
@@ -180,7 +195,7 @@ export class PoTable {
     }
   }
 
-  getTableData() {
+  getTableData(): string {
     return this.rawData;
   }
 }

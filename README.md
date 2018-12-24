@@ -8,6 +8,7 @@ Use po file as a database. Can be useful for cli tools, UI interfaces, data expl
 ```
 SELECT
 UPDATE
+SET
 WHERE
 AND
 OR
@@ -18,7 +19,7 @@ LIKE
 
 ## Available columns
 
-`msgid, msgstr, msgctxt, msgid_plural`
+`msgid, msgstr, msgstr[0-9], msgctxt, msgid_plural`
 
 ## Examples
 
@@ -129,13 +130,28 @@ table.getTableData();
 db.execute("update simple set msgstr='value' where msgid='test'", true);
 ```
 
-## Plans
+### Plurals
 
-- plural select/update - msgstr{index}
+In case message has multiple plural forms, all operations must be
+made by specifying an additional index in the column name i.e:
+
+`msgstr2`
+
+As indexes start with 0,  this refers to third form of the message, otherwise it will be treated like singular.
+
+```js
+// get all items with second form equals to 'xxx'
+table.execute("select count(1) from t where msgstr1='xxx'")
+
+// update an item and set it's first form to 'yyy'
+table.execute("update t set msgstr0='yyy' where msgstr1='xxx'")
+```
+
+## Plans
 - reference search
-- handy functions(LOWER, UPPER)
 - IN operator
 - ORDER operator
+- handy functions(LOWER, UPPER)
 
 
 ## Cudos

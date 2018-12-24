@@ -73,7 +73,7 @@ Array [
     "msgid_plural": "test_plural",
     "msgstr": Array [
       "",
-      "",
+      "xxx",
     ],
     "nplurals": 2,
     "obsolete": false,
