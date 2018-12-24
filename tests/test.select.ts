@@ -37,13 +37,7 @@ test("select * from table ilike", () => {
   expect(items[0].msgid).toEqual("TESTUPPER");
 });
 
-
-
 test("select count(1) from table", () => {
-  const count = <number>(
-    table.execute(
-      "select count(1) from t"
-    )
-  );
+  const count = <number>table.execute("select count(1) from t");
   expect(count).toEqual(6);
 });

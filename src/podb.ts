@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { find } from "./finder";
 import { Item, parse, PO } from "pofile";
-import {regExpFromString} from "./util";
+import { regExpFromString } from "./util";
 import {
   parseSql,
   isComparison,
@@ -16,7 +16,9 @@ import {
 import { isArray } from "util";
 
 const AVAILABLE_COLUMNS = ["msgid", "msgstr", "msgctxt", "msgid_plural"];
-const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join(", ")}`;
+const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join(
+  ", "
+)}`;
 
 export class PoTable {
   po: PO;
@@ -27,29 +29,32 @@ export class PoTable {
     this.po = parse(tableData);
   }
 
-  private test(operator: OperatorType, left: string, right: string|RegExp): boolean {
-    if(operator == OperatorType.EQUAL){
+  private test(
+    operator: OperatorType,
+    left: string,
+    right: string | RegExp
+  ): boolean {
+    if (operator == OperatorType.EQUAL) {
       return left == right;
     } else if (operator == OperatorType.LIKE) {
-      return (<RegExp>right).test(left)
+      return (<RegExp>right).test(left);
     } else {
-      return false
+      return false;
     }
   }
 
-  private getValue(operator: OperatorType, rawValue: string): string|RegExp{
-      if (operator == OperatorType.LIKE) {
-        return regExpFromString(rawValue);
-      } else {
-        return rawValue;
-      }
+  private getValue(operator: OperatorType, rawValue: string): string | RegExp {
+    if (operator == OperatorType.LIKE) {
+      return regExpFromString(rawValue);
+    } else {
+      return rawValue;
+    }
   }
 
   private match(item: Item, where: WhereClause | ColumnRef): boolean {
-    if(!where){
-      return true
-    }
-    else if (where.type == WhereType.COLUMN) {
+    if (!where) {
+      return true;
+    } else if (where.type == WhereType.COLUMN) {
       const condition = <ColumnRef>where;
       if (AVAILABLE_COLUMNS.indexOf(condition.column) == -1) {
         throw AVAILABLE_COLUMNS_EXCEPTION;
@@ -60,10 +65,13 @@ export class PoTable {
       if (condition.column == "msgctxt") return !!item.msgctxt;
       if (condition.column == "msgid_plural") return !!item.msgid_plural;
     } else {
-      where = <WhereClause>where
+      where = <WhereClause>where;
       if (isComparison(where.operator)) {
         const condition = <ColumnRef>where.left;
-        const value = this.getValue(where.operator, (<ColumnRef>where.right).value);
+        const value = this.getValue(
+          where.operator,
+          (<ColumnRef>where.right).value
+        );
         if (condition.column == "msgid") {
           return this.test(where.operator, item.msgid, value);
         } else if (condition.column == "msgid_plural") {
@@ -110,11 +118,14 @@ export class PoTable {
   }
 
   private select(items: Array<Item>, where: WhereClause) {
-    return items.filter((item) => this.match(item, where));
+    return items.filter(item => this.match(item, where));
   }
-  
+
   private count(items: Array<Item>, where: WhereClause) {
-    return items.reduce((acc, item) => acc + (this.match(item, where) ? 1 : 0), 0);
+    return items.reduce(
+      (acc, item) => acc + (this.match(item, where) ? 1 : 0),
+      0
+    );
   }
 
   private update(
@@ -148,8 +159,8 @@ export class PoTable {
       case QueryType.SELECT: {
         if (
           isArray(sql.columns) &&
-          sql.columns[0].expr.type == 'function' &&
-          sql.columns[0].expr.name == 'count'
+          sql.columns[0].expr.type == "function" &&
+          sql.columns[0].expr.name == "count"
         ) {
           return this.count(this.po.items, sql.where);
         } else {

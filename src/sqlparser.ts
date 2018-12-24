@@ -12,7 +12,7 @@ export enum OperatorType {
   NOT = "NOT",
   EQUAL = "=",
   LIKE = "LIKE",
-  ILIKE = "ILIKE",
+  ILIKE = "ILIKE"
 }
 
 export enum WhereType {
@@ -68,5 +68,5 @@ export function isComparison(operator: OperatorType) {
     operator == OperatorType.EQUAL ||
     operator == OperatorType.LIKE ||
     operator == OperatorType.ILIKE
-  )
+  );
 }

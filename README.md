@@ -13,7 +13,6 @@ AND
 NOT
 COUNT
 LIKE
-ILIKE
 ```
 
 ## Available columns
@@ -22,14 +21,15 @@ ILIKE
 
 ## Examples
 
-As database:
+#### As database:
 ```js
 import {PoDb} from 'podb';
 const db = new PoDb('.'); // open current directory as db
 const messages = db.execute("select count(1) from catalog") // catalog is a table points to catalog.po in './'
 console.log(messages); // 42
 ```
-As table:
+### As table:
+
 ```js
 import * as fs from 'fs'
 import {PoTable} from 'podb';
@@ -50,7 +50,7 @@ table.execute("select * from t where not msgstr")); // get all untranslated reco
 //]
 
 ```
-LIKE
+### LIKE
 
 ```js
 table.execute("select * from t where msgstr like 'пошук'")
@@ -64,36 +64,24 @@ table.execute("select * from t where msgstr like 'пошук'")
 //     flags: {},
 //     obsolete: false,
 //     nplurals: 3 },
-
 ```
 
-``` 
-> const poDb = require('podb').PoDb
-undefined
-> db = new poDb('.')
-PoDb { path: '.' }
-> db.execute("select * from stats where msgid='test' AND msgctxt")
-[ { msgid: 'test',
-    msgctxt: 'bla',
-    references: 
-     [ 'tests/fixtures/checkTest/check-trans-exist.js:2',
-       'tests/fixtures/checkTest/check-trans-exist.js:3' ],
-    msgid_plural: null,
-    msgstr: [ '' ],
-    comments: [],
-    extractedComments: [],
-    flags: {},
-    obsolete: false,
-    nplurals: 2 },
-  { msgid: 'test',
-    msgctxt: 'lala',
-    references: [],
-    msgid_plural: null,
-    msgstr: [ '' ],
-    comments: [],
-    extractedComments: [],
-    flags: {},
-    obsolete: false,
-    nplurals: 2 } ]
-> 
+### Advanced LIKE for case insensitive search
+
+```js
+table.execute("select * from t where msgstr like '/продаж/i'")
+// [ { msgid: ' Продажа, поиск, поставщики и магазины, все цены',
+//     msgctxt: null,
+//     references: [ 'myproj/lib/title.py:1014' ],
+//     msgid_plural: null,
+//     msgstr: [ ' Продаж, пошук, постачальники та магазини, всі ціни' ],
+//     comments: [],
+//     extractedComments: [],
+//     flags: {},
+//     obsolete: false,
+//     nplurals: 3 },
 ```
+
+## Cudos
+
+[rubenv](https://github.com/rubenv) for excelent [pofile](https://github.com/) library.
