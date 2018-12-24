@@ -2,7 +2,7 @@
 SQL interface for po(gettext) files.
 
 ## Motivation
-Use po file as a database. Can be useful for cli tools, UI interfaces, also for fun.
+Use po file as a database. Can be useful for cli tools, UI interfaces, data exploration, also for fun.
 
 ## Supported SQL
 ```
@@ -25,8 +25,10 @@ LIKE
 #### As database:
 ```js
 import {PoDb} from 'podb';
-const db = new PoDb('.'); // open current directory as db
-const messages = db.execute("select count(1) from catalog") // catalog is a table points to catalog.po in './'
+// open current directory as db
+const db = new PoDb('.'); 
+ // catalog is a table points to catalog.po in './'
+const messages = db.execute("select count(1) from catalog")
 console.log(messages); // 42
 ```
 ### As table:
@@ -34,9 +36,11 @@ console.log(messages); // 42
 ```js
 import * as fs from 'fs'
 import {PoTable} from 'podb';
-const table = new PoTable(fs.readFileSync('catalog.po').toString()); // open in memory data as a table
+// open in memory data as a table
+const table = new PoTable(fs.readFileSync('catalog.po').toString()); 
 // table name is irrelevant in select clauses except 'table' is a reserved word
-table.execute("select * from t where not msgstr")); // get all untranslated records
+// get all untranslated records
+table.execute("select * from t where not msgstr")); 
 // [{ msgid: ' в категории %s',
 //     msgctxt: null,
 //     references: [ 'myproj/lib/title.py:959' ],
@@ -54,7 +58,8 @@ table.execute("select * from t where not msgstr")); // get all untranslated reco
 ### Compound statements
 
 ```js
-table.execute("select * from t where msgid_plural and not msgstr")); // get all untranslated plural strings
+// get all untranslated plural strings
+table.execute("select * from t where msgid_plural and not msgstr")); 
 ```
 
 ### LIKE
@@ -103,8 +108,8 @@ table.getTableData()
 // msgid "test"
 // msgstr ""
 
-table.execute("update simple set msgstr='value' where msgid='test'") // 1
-table.getTableData()
+table.execute("update simple set msgstr='value' where msgid='test'"); // 1
+table.getTableData();
 
 // msgid ""
 // msgstr ""
@@ -120,7 +125,8 @@ table.getTableData()
 #### Or as db
 
 ```js
-db.execute("update simple set msgstr='value' where msgid='test'", true) // sync to file
+ // sync to file
+db.execute("update simple set msgstr='value' where msgid='test'", true);
 ```
 
 ## Plans
