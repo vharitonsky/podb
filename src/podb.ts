@@ -22,7 +22,7 @@ const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join
 
 export class PoTable {
   po: PO;
-  rawData: string;
+  private rawData: string;
 
   constructor(tableData: string) {
     this.rawData = tableData;
@@ -91,6 +91,11 @@ export class PoTable {
       } else if (where.operator == OperatorType.AND) {
         return (
           this.match(item, <WhereClause>where.left) &&
+          this.match(item, <WhereClause>where.right)
+        );
+      } else if (where.operator == OperatorType.OR) {
+        return (
+          this.match(item, <WhereClause>where.left) ||
           this.match(item, <WhereClause>where.right)
         );
       } else if (where.operator == OperatorType.NOT) {
@@ -174,6 +179,10 @@ export class PoTable {
         throw "Only selects and updates are supported";
     }
   }
+
+  getTableData() {
+    return this.rawData;
+  }
 }
 
 export class PoDb {
@@ -202,7 +211,7 @@ export class PoDb {
     const poTable = new PoTable(data);
     const result = poTable.execute(statement);
     if (sync) {
-      fs.writeFileSync(path, poTable.rawData);
+      fs.writeFileSync(path, poTable.getTableData());
     }
     return result;
   }

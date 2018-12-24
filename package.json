@@ -1,6 +1,6 @@
 {
   "name": "podb",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "dist/podb.js",
   "types": "dist/podb.d.ts",
   "scripts": {

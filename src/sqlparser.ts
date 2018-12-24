@@ -12,7 +12,8 @@ export enum OperatorType {
   NOT = "NOT",
   EQUAL = "=",
   LIKE = "LIKE",
-  ILIKE = "ILIKE"
+  ILIKE = "ILIKE",
+  OR = "OR"
 }
 
 export enum WhereType {

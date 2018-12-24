@@ -41,3 +41,10 @@ test("select count(1) from table", () => {
   const count = <number>table.execute("select count(1) from t");
   expect(count).toEqual(6);
 });
+
+test("select or", () => {
+  const count = <number>(
+    table.execute("select count(1) from t where not msgctxt or msgctxt='bla'")
+  );
+  expect(count).toEqual(4);
+});
