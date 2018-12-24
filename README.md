@@ -141,3 +141,5 @@ db.execute("update simple set msgstr='value' where msgid='test'", true);
 ## Cudos
 
 [rubenv](https://github.com/rubenv) for excelent [pofile](https://github.com/) library.
+
+[godmodelabs](https://github.com/godmodelabs) for handy [flora-sql-parser](https://github.com/godmodelabs/flora-sql-parser)
