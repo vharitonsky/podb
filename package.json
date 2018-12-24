@@ -1,8 +1,14 @@
 {
   "name": "podb",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "dist/podb.js",
   "types": "dist/podb.d.ts",
+  "homepage": "https://github.com/vharitonsky/podb",
+  "bugs": { 
+    "url" : "https://github.com/vharitonsky/podb/issues",
+    "email" : "vharitonsky@gmail.com"
+  },
+  "keywords": ["pofile", "translation", "sql"],
   "scripts": {
     "preversion": "npm run build && npm test",
     "test": "mkdir -p dist && jest",
