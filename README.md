@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/vharitonsky/podb.svg?branch=master)](https://travis-ci.com/vharitonsky/podb)
+
 ## What is this ?
 SQL interface for po(gettext) files.
 
