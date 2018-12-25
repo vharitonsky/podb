@@ -103,7 +103,7 @@ table.execute("select * from t where msgstr like '/продаж/i'")
 ### LIMIT/OFFSET
 
 ```js
-table.execute("select * from t limit 10,20'"); // offset 10 limit 20
+table.execute("select * from t limit 10,20"); // offset 10 limit 20
 ```
 
 
