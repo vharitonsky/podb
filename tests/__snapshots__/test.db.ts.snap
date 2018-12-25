@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`open db 1`] = `
+Object {
+  "Content-Transfer-Encoding": "",
+  "Content-Type": "text/plain; charset=utf-8",
+  "Language": "",
+  "Language-Team": "",
+  "Last-Translator": "",
+  "PO-Revision-Date": "",
+  "POT-Creation-Date": "",
+  "Plural-Forms": "nplurals=2; plural=(n!=1);",
+  "Project-Id-Version": "",
+  "Report-Msgid-Bugs-To": "",
+}
+`;
