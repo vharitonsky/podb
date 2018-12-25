@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { find } from "./finder";
-import { Item, parse, PO } from "pofile";
+import { Item, parse, PO, IHeaders } from "pofile";
 import { regExpFromString } from "./util";
 import {
   parseSql,
@@ -213,6 +213,10 @@ export class PoTable {
   getTableData(): string {
     return this.rawData;
   }
+
+  getHeaders(): Partial<IHeaders> {
+    return this.po.headers;
+  }
 }
 
 export class PoDb {
@@ -222,7 +226,7 @@ export class PoDb {
     this.path = path;
   }
 
-  private getFilename(sql: ParsedStatement) {
+  private getTableName(sql: ParsedStatement) {
     switch (sql.type) {
       case QueryType.SELECT:
         return sql.from[0].table;
@@ -233,15 +237,23 @@ export class PoDb {
     }
   }
 
+  private getTablePath(tablename: string): string {
+    return `${this.path}/${tablename}.po`;
+  }
+
+  getTable(tablename: string): PoTable {
+    return new PoTable(
+      fs.readFileSync(this.getTablePath(tablename)).toString()
+    );
+  }
+
   execute(statement: string, sync: Boolean): number | Array<Item> {
     const sql = parseSql(statement);
-    const filename = this.getFilename(sql);
-    const path = `${this.path}/${filename}.po`;
-    let data = fs.readFileSync(path).toString();
-    const poTable = new PoTable(data);
+    const tablename = this.getTableName(sql);
+    const poTable = this.getTable(tablename);
     const result = poTable.execute(statement);
     if (sync) {
-      fs.writeFileSync(path, poTable.getTableData());
+      fs.writeFileSync(this.getTablePath(tablename), poTable.getTableData());
     }
     return result;
   }
