@@ -17,6 +17,7 @@ OR
 NOT
 COUNT
 LIKE
+LIMIT
 ```
 
 ## Available columns
@@ -95,7 +96,16 @@ table.execute("select * from t where msgstr like '/продаж/i'")
 //     flags: {},
 //     obsolete: false,
 //     nplurals: 3 },
+//     ...
+//     ]
 ```
+
+### LIMIT/OFFSET
+
+```js
+table.execute("select * from t limit 10,20'"); // offset 10 limit 20
+```
+
 
 ### UPDATE
 
@@ -150,7 +160,6 @@ table.execute("update t set msgstr0='yyy' where msgstr1='xxx'")
 ```
 
 ## Plans
-- reference search
 - IN operator
 - ORDER operator
 - handy functions(LOWER, UPPER)

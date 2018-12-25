@@ -58,6 +58,7 @@ export type ParsedStatement = {
   columns: Array<Expression>;
   set: Array<SetValue>;
   table: string;
+  limit: [{ type: string; value: number }, { type: string; value: number }];
 };
 
 export function parseSql(statement: string): ParsedStatement {

@@ -20,7 +20,8 @@ const AVAILABLE_COLUMNS = [
   "msgstr",
   "msgstr[0-9]",
   "msgctxt",
-  "msgid_plural"
+  "msgid_plural",
+  "references"
 ];
 const AVAILABLE_COLUMNS_EXCEPTION = `Available columns: ${AVAILABLE_COLUMNS.join(
   ", "
@@ -71,6 +72,7 @@ export class PoTable {
       if (condition.column.indexOf("msgstr") == 0)
         return !!item.msgstr[parseInt(condition.column[6])];
       if (condition.column == "msgctxt") return !!item.msgctxt;
+      if (condition.column == "references") return item.references.length > 0;
       if (condition.column == "msgid_plural") return !!item.msgid_plural;
     } else {
       where = <WhereClause>where;
@@ -93,6 +95,13 @@ export class PoTable {
         } else if (condition.column == "msgstr") {
           for (const msg of item.msgstr) {
             if (this.test(where.operator, msg, value)) {
+              return true;
+            }
+            return false;
+          }
+        } else if (condition.column == "references") {
+          for (const referecence of item.references) {
+            if (this.test(where.operator, referecence, value)) {
               return true;
             }
             return false;
@@ -184,7 +193,13 @@ export class PoTable {
         ) {
           return this.count(this.po.items, sql.where);
         } else {
-          return this.select(this.po.items, sql.where);
+          const selected = this.select(this.po.items, sql.where);
+          if (sql.limit) {
+            const offset = sql.limit[0].value;
+            const limit = sql.limit[1].value;
+            return selected.slice(offset, limit + offset);
+          }
+          return selected;
         }
       }
       case QueryType.UPDATE: {

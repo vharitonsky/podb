@@ -55,3 +55,24 @@ test("select plural", () => {
   );
   expect(count).toEqual(1);
 });
+
+test("select references", () => {
+  const count = <number>(
+    table.execute(
+      "select count(1) from t where references like 'check-trans-exist'"
+    )
+  );
+  expect(count).toEqual(2);
+  const countWithout = <number>(
+    table.execute("select count(1) from t where NOT references")
+  );
+  expect(countWithout).toEqual(4);
+});
+
+test("select limit/offset", () => {
+  const items = <Array<Item>>table.execute("select * from t limit 2");
+  expect(items.length).toEqual(2);
+  const secondItem = <Array<Item>>table.execute("select * from t limit 1,1");
+  expect(secondItem.length).toEqual(1);
+  expect(secondItem[0]).toEqual(items[1]);
+});
