@@ -1,6 +1,6 @@
 {
   "name": "podb",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "dist/podb.js",
   "types": "dist/podb.d.ts",
   "homepage": "https://github.com/vharitonsky/podb",
