@@ -1,8 +1,8 @@
-export function regExpFromString(regex: string): RegExp {
-    const delimiterPosition = regex.lastIndexOf('/');
-    if (delimiterPosition == -1) return new RegExp(regex);
-
-    const pattern = regex.substring(1, delimiterPosition);
-    let flags = regex.substring(delimiterPosition + 1);
-    return new RegExp(pattern, flags);
+export function regExpFromString(regex: string) {
+  let flags = regex.replace(/.*\/([gimuy]*)$/, "$1");
+  if (flags === regex) flags = "";
+  let pattern = flags
+    ? regex.replace(new RegExp("^/(.*?)/" + flags + "$"), "$1")
+    : regex;
+  return new RegExp(pattern, flags);
 }
