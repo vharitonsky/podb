@@ -165,8 +165,8 @@ table.execute("update t set msgstr0='yyy' where msgstr1='xxx'")
 - handy functions(LOWER, UPPER)
 
 
-## Cudos
+## Kudos
 
-[rubenv](https://github.com/rubenv) for excelent [pofile](https://github.com/) library.
+[rubenv](https://github.com/rubenv) for excelent [pofile](https://github.com/rubenv/pofile) library.
 
 [godmodelabs](https://github.com/godmodelabs) for handy [flora-sql-parser](https://github.com/godmodelabs/flora-sql-parser)
